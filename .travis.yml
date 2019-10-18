@@ -17,6 +17,16 @@ matrix:
       python: 3.6
       env: PYTHON_VER=3.6 VERSION=v2.5 ANSIBLE_VER=2.9.0rc4
       install:
+        - pip install -U pip
+        - pip install pytest==4.6.5 pytest-mock pytest-xdist jinja2 PyYAML black==19.3b0
+        - pip install pynetbox==4.0.6 cryptography codecov
+        - pip install jmespath
+        - cd ../../
+        # This is due to ansible-test only being available within devel branch
+        - git clone https://github.com/ansible/ansible.git
+        - cd ansible
+        - git checkout stable-2.9
+        - source hacking/env-setup
         - cd ..
         # Setup netbox container for integration testing
         - git clone https://github.com/FragmentedPacket/netbox-docker.git
@@ -57,6 +67,8 @@ matrix:
         - pip install -U pip
         - pip install pytest==4.6.5 pytest-mock pytest-xdist jinja2 PyYAML black==19.3b0
         - pip install pynetbox==4.0.6 cryptography jmespath
+        - pip install jmespath
+        - cd ../../
         # This is due to ansible-test only being available within devel branch
         - git clone https://github.com/ansible/ansible.git
         - cd ansible

@@ -28,6 +28,20 @@ matrix:
         - pip install -U pip
         - pip install pytest==4.6.5 pytest-mock pytest-xdist jinja2 PyYAML black==19.3b0
         - pip install pynetbox==4.0.6 cryptography codecov jmespath ansible==$ANSIBLE_VER
+      
+      before_script:
+        - mkdir -p ~/ansible_collections/$COLLECTION_NAMESPACE
+        - cp -R FragmentedPacket/$COLLECTION_NAME ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+        - cd ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+        - ansible-galaxy collection build .
+        - ansible-galaxy collection install $COLLECTION_NAMESPACE-$COLLECTION_NAME-$COLLECTION_VERSION.tar.gz -p /home/travis/.ansible/collections
+      
+      script:
+        - ansible-test units --python $PYTHON_VER -v
+        - black . --check
+        - "sleep 120"
+        - python tests/integration/netbox-deploy.py
+        - ansible-playbook tests/integration/integration-tests.yml -v
 
     - name: "Python 3.6 - Netbox Latest - Ansible Devel"
       python: 3.6
@@ -49,16 +63,16 @@ matrix:
         - source hacking/env-setup
         - cd  ..
 
-before_script:
-  - mkdir -p ~/ansible_collections/$COLLECTION_NAMESPACE
-  - cp -R $COLLECTION_NAME ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
-  - cd ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
-  - ansible-galaxy collection build .
-  - ansible-galaxy collection install $COLLECTION_NAMESPACE-$COLLECTION_NAME-$COLLECTION_VERSION.tar.gz -p /home/travis/.ansible/collections
+      before_script:
+        - mkdir -p ~/ansible_collections/$COLLECTION_NAMESPACE
+        - cp -R $COLLECTION_NAME ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+        - cd ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+        - ansible-galaxy collection build .
+        - ansible-galaxy collection install $COLLECTION_NAMESPACE-$COLLECTION_NAME-$COLLECTION_VERSION.tar.gz -p /home/travis/.ansible/collections
 
-script:
-  - ansible-test units --python $PYTHON_VER -v
-  - black . --check
-  - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:32768)" != "200" ]]; do echo "waiting for Netbox"; sleep 5; done' || false
-  - python tests/integration/netbox-deploy.py
-  - ansible-playbook tests/integration/integration-tests.yml -v
+      script:
+        - ansible-test units --python $PYTHON_VER -v
+        - black . --check
+        - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:32768)" != "200" ]]; do echo "waiting for Netbox"; sleep 5; done' || false
+        - python tests/integration/netbox-deploy.py
+        - ansible-playbook tests/integration/integration-tests.yml -v

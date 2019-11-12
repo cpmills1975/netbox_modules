@@ -14,10 +14,12 @@ pipeline {
 
         stage('Clone Ansible') {
             agent {
-                docker { image 'python:3.6' }
+                docker {
+                    image 'python:3'
+                    args '-u 0:0'
+                }
             }
             steps {
-                sh 'who am i'
                 sh 'pip install -U pip'
                 sh 'pip install pytest==4.6.5 pytest-mock pytest-xdist jinja2 PyYAML black==19.3b0'
                 sh 'pip install pynetbox==4.0.6 cryptography codecov'

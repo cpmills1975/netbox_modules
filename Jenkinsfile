@@ -11,5 +11,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Clone Ansible') {
+            agent {
+                docker { image 'python:3.6' }
+            }
+            steps {
+                sh 'python -c "print('Hello World!')"'
+            }
+        }
     }
 }

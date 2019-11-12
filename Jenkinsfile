@@ -25,10 +25,7 @@ pipeline {
                 sh 'pip install pynetbox==4.0.6 cryptography codecov'
                 sh 'pip install jmespath'
                 dir('ansible') {
-                    git {
-                        url: 'https://github.com/ansible/ansible.git'
-                        branch: 'stable-2.9'
-                    }
+                    git branch: 'stable-2.9' url: 'https://github.com/ansible/ansible.git'
                     sh 'source hacking/env-setup'
                     sh 'ansible --version'
                 }

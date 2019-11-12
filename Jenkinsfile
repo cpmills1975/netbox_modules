@@ -24,6 +24,12 @@ pipeline {
                 sh 'pip install pytest==4.6.5 pytest-mock pytest-xdist jinja2 PyYAML black==19.3b0'
                 sh 'pip install pynetbox==4.0.6 cryptography codecov'
                 sh 'pip install jmespath'
+                dir('ansible') {
+                    git url: 'https://github.com/ansible/ansible.git'
+                    sh 'git checkout stable-2.9'
+                    sh 'source hacking/env-setup'
+                    sh 'ansible --version'
+                }
             }
         }
     }

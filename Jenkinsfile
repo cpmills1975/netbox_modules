@@ -27,7 +27,7 @@ pipeline {
                 sh 'pip install jmespath'
                 dir('ansible') {
                     git branch: 'stable-2.9', url: 'https://github.com/ansible/ansible.git'
-                    sh '. hacking/env-setup'
+                    sh 'set +e ; . hacking/env-setup'
                     sh 'ansible --version'
                 }
             }

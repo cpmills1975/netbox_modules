@@ -2,9 +2,7 @@ pipeline {
     agent none
     stages {
         stage('Clone netbox') {
-            agent {
-                any
-            }
+            agent any
             steps {
                 dir('netbox-docker') {
                     git url: 'https://github.com/FragmentedPacket/netbox-docker.git'

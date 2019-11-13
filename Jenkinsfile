@@ -31,6 +31,19 @@ pipeline {
                        set +e
                        . hacking/env-setup
                        ansible --version
+
+                       COLLECTION_NAMESPACE="fragmentedpacket"
+                       COLLECTION_NAME="netbox_modules"
+                       COLLECTION_VERSION="0.1.0"
+
+                       mkdir -p ~/ansible_collections/$COLLECTION_NAMESPACE
+                       cp -R FragmentedPacket/$COLLECTION_NAME ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+                       cd ~/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+                       ansible-galaxy collection build .
+                       ansible-galaxy collection install $COLLECTION_NAMESPACE-$COLLECTION_NAME-$COLLECTION_VERSION.tar.gz -p /home/travis/.ansible/collections
+
+                       ansible-test units --python $PYTHON_VER -v
+                       black . --check
                        """
                 }
             }
